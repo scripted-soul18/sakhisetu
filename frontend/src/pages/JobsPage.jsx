@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, Briefcase, MapPin, Clock, X, CheckCircle2 } from 'lucide-react';
+import { Search, Filter, Briefcase, MapPin, Clock, X, CheckCircle2, Sparkles, UserCheck } from 'lucide-react';
 import { jobService, recommendationService, profileService } from '../services/api';
+import { DEMO_PROFILES } from '../data/mockData';
 import JobCard from '../components/JobCard';
 import JobDetailModal from '../components/JobDetailModal';
 import LoadingScreen from '../components/LoadingScreen';
@@ -11,6 +12,7 @@ export default function JobsPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [selectedJob, setSelectedJob] = useState(null);
   const [appliedToast, setAppliedToast] = useState('');
+  const [activeProfile, setActiveProfile] = useState(() => profileService.getCachedProfile());
 
   // Filters State
   const [search, setSearch] = useState('');
@@ -19,13 +21,13 @@ export default function JobsPage() {
   const [selectedHours, setSelectedHours] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const fetchJobs = async () => {
+  const fetchJobs = async (customProfile = null) => {
     try {
       setLoading(true);
       setErrorMsg('');
 
       // Check if user has an active profile to score jobs against
-      const profile = profileService.getCachedProfile();
+      const profile = customProfile !== undefined ? customProfile : (activeProfile || profileService.getCachedProfile());
 
       if (profile) {
         // Fetch personalized weighted recommendations
@@ -98,6 +100,18 @@ export default function JobsPage() {
     setTimeout(() => setAppliedToast(''), 4000);
   };
 
+  const handleSelectDemoProfile = (p) => {
+    localStorage.setItem('sakhi_current_profile', JSON.stringify(p.data));
+    setActiveProfile(p.data);
+    fetchJobs(p.data);
+  };
+
+  const handleClearProfile = () => {
+    localStorage.removeItem('sakhi_current_profile');
+    setActiveProfile(null);
+    fetchJobs(null);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
@@ -121,6 +135,59 @@ export default function JobsPage() {
           <p className="text-xs sm:text-sm text-slate-600 mt-1">
             Browse verified part-time, remote, and hybrid positions structured for single mothers.
           </p>
+        </div>
+      </div>
+
+      {/* Demo Profile Simulation Bar */}
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-rose-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-xl bg-rose-50 text-brand-600 flex items-center justify-center font-bold shrink-0">
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div>
+            <p className="text-xs font-bold text-slate-900 flex items-center gap-2">
+              <span>Simulate Matching Engine as Demo Profile:</span>
+              {activeProfile && (
+                <span className="text-[10px] bg-rose-100 text-brand-700 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Active
+                </span>
+              )}
+            </p>
+            <p className="text-[11px] text-slate-500">
+              {activeProfile 
+                ? `Scoring jobs for ${activeProfile.full_name} (${activeProfile.available_hours} hrs/day • ${activeProfile.career_preference})`
+                : 'Click any profile below to see live 0-100% compatibility scores and reasons'}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          {DEMO_PROFILES.map((dp) => {
+            const isSelected = activeProfile?.full_name === dp.name;
+            return (
+              <button
+                key={dp.id}
+                onClick={() => handleSelectDemoProfile(dp)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs active:scale-95 ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-brand-600 to-rose-500 text-white shadow-sm'
+                    : 'bg-slate-50 hover:bg-rose-50 text-slate-700 hover:text-brand-700 border border-slate-200'
+                }`}
+                title={dp.tagline}
+              >
+                {dp.name} ({dp.avatar_title.split('&')[0].trim()})
+              </button>
+            );
+          })}
+
+          {activeProfile && (
+            <button
+              onClick={handleClearProfile}
+              className="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+            >
+              ✕ Clear
+            </button>
+          )}
         </div>
       </div>
 

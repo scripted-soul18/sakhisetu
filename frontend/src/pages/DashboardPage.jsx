@@ -6,6 +6,7 @@ import {
   CheckCircle2, ChevronRight, AlertCircle, LogIn, Heart, Phone
 } from 'lucide-react';
 import { profileService, recommendationService, authService } from '../services/api';
+import { DEMO_PROFILES } from '../data/mockData';
 import MatchBadge from '../components/MatchBadge';
 import JobCard from '../components/JobCard';
 import CourseCard from '../components/CourseCard';
@@ -27,12 +28,12 @@ export default function DashboardPage() {
   const [appliedSuccessToast, setAppliedSuccessToast] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = async (overrideProfile = null) => {
     try {
       setLoading(true);
       setErrorMsg('');
 
-      let activeProfile = location.state?.profile || profileService.getCachedProfile();
+      let activeProfile = overrideProfile || location.state?.profile || profileService.getCachedProfile();
 
       // If no cached profile, check if user is logged in
       const user = authService.getCurrentUser();
@@ -56,7 +57,7 @@ export default function DashboardPage() {
       }
 
       // If recommendations passed in state, use them
-      if (location.state?.recommendations) {
+      if (!overrideProfile && location.state?.recommendations) {
         setRecommendations(location.state.recommendations);
         setLoading(false);
         return;
@@ -83,6 +84,12 @@ export default function DashboardPage() {
     setTimeout(() => setAppliedSuccessToast(''), 4000);
   };
 
+  const handleSelectDemoProfile = (p) => {
+    localStorage.setItem('sakhi_current_profile', JSON.stringify(p.data));
+    setProfile(p.data);
+    loadDashboardData(p.data);
+  };
+
   if (loading) {
     return <LoadingScreen message="Calculating weighted recommendation scores..." />;
   }
@@ -90,30 +97,84 @@ export default function DashboardPage() {
   // If no profile registered yet
   if (!profile) {
     return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-6">
-        <div className="w-16 h-16 rounded-2xl bg-white border border-rose-200 p-1 flex items-center justify-center mx-auto shadow-md">
-          <img src="/logo.png" alt="SakhiSetu" className="w-full h-full object-contain" />
-        </div>
-        <h2 className="font-heading font-extrabold text-3xl text-slate-900">
-          Create Your Profile to View Matches
-        </h2>
-        <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-          SakhiSetu ranks opportunities based on your real-life constraints: available hours, education, commute preference, and child's age.
-        </p>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-10">
+        
+        {/* Main CTA */}
+        <div className="text-center space-y-4 max-w-xl mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-white border border-rose-200 p-1 flex items-center justify-center mx-auto shadow-md">
+            <img src="/logo.png" alt="SakhiSetu" className="w-full h-full object-contain" />
+          </div>
+          <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            Personalized Mother Dashboard
+          </h2>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Create your profile with your individual constraints to view explainable job compatibility scores (0-100%), skill bridge recommendations, and government schemes.
+          </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-          <Link
-            to="/register"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 to-rose-500 hover:from-brand-700 shadow-md shadow-brand-500/25 transition-all"
-          >
-            Create Your Profile Now
-          </Link>
-          <button
-            onClick={() => setShowAuthModal(true)}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-2xl text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
-          >
-            Sign In with Mobile / Email OTP
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <Link
+              to="/register"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-brand-600 to-rose-500 hover:from-brand-700 shadow-md shadow-brand-500/25 transition-all"
+            >
+              Create Your Profile Now →
+            </Link>
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+            >
+              Sign In (Mobile / Email OTP)
+            </button>
+          </div>
+        </div>
+
+        {/* Instant Demo Profile Showcase */}
+        <div className="pt-6 border-t border-slate-200/80">
+          <div className="text-center mb-6">
+            <span className="text-xs font-bold uppercase tracking-wider text-brand-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200 inline-block mb-1">
+              Live Interactive Prototype
+            </span>
+            <h3 className="font-heading font-bold text-xl text-slate-900">
+              Or Explore Immediately as a Demo Mother Profile
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Click any profile below to trigger the recommendation engine and preview calculated matches in real time:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {DEMO_PROFILES.map((dp) => (
+              <button
+                key={dp.id}
+                onClick={() => handleSelectDemoProfile(dp)}
+                className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-brand-300 shadow-xs hover:shadow-card hover:-translate-y-1 transition-all text-left flex flex-col justify-between group active:scale-98"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="w-8 h-8 rounded-xl bg-rose-50 text-brand-600 font-bold flex items-center justify-center text-xs group-hover:bg-brand-600 group-hover:text-white transition-colors">
+                      {dp.name[0]}
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                      {dp.data.city}
+                    </span>
+                  </div>
+                  <h4 className="font-heading font-bold text-base text-slate-900 group-hover:text-brand-600 transition-colors">
+                    {dp.name}
+                  </h4>
+                  <p className="text-xs font-semibold text-brand-700 mt-0.5">
+                    {dp.avatar_title}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                    {dp.tagline}
+                  </p>
+                </div>
+
+                <div className="pt-4 mt-3 border-t border-slate-100 text-[11px] font-bold text-brand-600 flex items-center justify-between">
+                  <span>{dp.data.available_hours} hrs/day</span>
+                  <span className="flex items-center gap-1">Load Dashboard →</span>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
         <AuthModal
@@ -143,6 +204,40 @@ export default function DashboardPage() {
           <span className="text-xs sm:text-sm font-medium">{appliedSuccessToast}</span>
         </div>
       )}
+
+      {/* Switch Demo Persona Bar */}
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-rose-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-brand-600" />
+          <span className="text-xs font-bold text-slate-800">
+            Switch Simulation Persona:
+          </span>
+          <span className="text-xs text-slate-500 hidden md:inline">
+            (Observe how matching scores and roadmaps re-calculate)
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {DEMO_PROFILES.map((dp) => (
+            <button
+              key={dp.id}
+              onClick={() => handleSelectDemoProfile(dp)}
+              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                profile?.full_name === dp.name
+                  ? 'bg-brand-600 text-white shadow-xs'
+                  : 'bg-slate-50 hover:bg-rose-50 text-slate-700 hover:text-brand-700 border border-slate-200'
+              }`}
+            >
+              {dp.name} ({dp.avatar_title.split('&')[0].trim()})
+            </button>
+          ))}
+          <Link
+            to="/register"
+            className="px-2.5 py-1 rounded-xl text-xs font-semibold text-slate-500 hover:text-brand-600 hover:bg-slate-50 transition-colors ml-1"
+          >
+            + Custom Profile
+          </Link>
+        </div>
+      </div>
 
       {/* Top Welcome & Score Header */}
       <div className="bg-gradient-to-r from-rose-50 via-white to-amber-50 rounded-3xl p-6 sm:p-10 border border-rose-200/80 shadow-soft flex flex-col lg:flex-row lg:items-center justify-between gap-6">

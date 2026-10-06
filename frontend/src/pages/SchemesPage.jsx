@@ -89,7 +89,7 @@ export default function SchemesPage() {
         {/* Categories */}
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
           <span className="text-slate-400 font-bold uppercase text-[10px] mr-1">Focus Areas:</span>
-          {['all', 'Women Empowerment & Safety', 'Maternal & Child Health', 'Employment & Career', 'Skill Development', 'Entrepreneurship', 'Business Financing'].map((cat) => (
+          {['all', 'Women Empowerment & Safety', 'Maternal & Child Health', 'Employment & Career', 'Skill Development', 'Entrepreneurship', 'Business Financing', 'Childcare & Social Security', 'Child Welfare & Financial Security'].map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}

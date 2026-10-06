@@ -323,6 +323,24 @@ SAMPLE_SCHEMES = [
         "required_documents": "Project proposal, Identity proof, Address proof, PAN card, Business registration.",
         "official_url": "https://www.standupmitra.in",
         "category": "Business Financing"
+    },
+    {
+        "name": "Palna – National Crèche Scheme for Working Mothers",
+        "description": "Centrally sponsored scheme providing daycare facilities for children (6 months to 6 years) of working mothers, including nutritional supplementation, immunization monitoring, and early learning.",
+        "who_it_helps": "Working single mothers, mothers in unorganized sectors, and informal workers.",
+        "eligibility": "Children of working women aged 6 months to 6 years. Special preference for single mothers.",
+        "required_documents": "Birth certificate of child, Mother's employment declaration or self-employment card, Aadhaar card.",
+        "official_url": "https://wcd.nic.in/schemes/national-creche-scheme",
+        "category": "Childcare & Social Security"
+    },
+    {
+        "name": "Sukanya Samriddhi Yojana (Child Future Savings)",
+        "description": "Government-backed savings scheme for girl child with high tax-free interest rates (8.2%) ensuring educational and financial security.",
+        "who_it_helps": "Mothers with girl child below age 10.",
+        "eligibility": "Girl child under 10 years of age. One account per child.",
+        "required_documents": "Child birth certificate, Mother/Guardian Aadhaar and PAN card, Proof of address.",
+        "official_url": "https://www.indiapost.gov.in",
+        "category": "Child Welfare & Financial Security"
     }
 ]
 

@@ -96,7 +96,7 @@ export default function CoursesPage() {
         {/* Categories Pills */}
         <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
           <span className="text-slate-400 font-bold uppercase text-[10px] mr-1">Categories:</span>
-          {['all', 'Data Entry', 'Digital Marketing', 'Software/IT', 'Customer Support', 'Financial Literacy', 'Tailoring'].map((cat) => (
+          {['all', 'Data & IT', 'Customer Service', 'Digital Marketing', 'Healthcare & Caregiving', 'Craft & Tailoring', 'Web Development', 'Financial Literacy'].map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}

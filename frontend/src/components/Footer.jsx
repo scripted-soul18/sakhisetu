@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ShieldCheck, ExternalLink, HelpCircle, PhoneCall } from 'lucide-react';
+import { ShieldCheck, ExternalLink, HelpCircle, PhoneCall } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -92,8 +92,8 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 mt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} SakhiSetu – Open-Source Women Empowerment Initiative. Developed for Innovation Showcase.</p>
-          <p className="flex items-center gap-1">
-            Built with <Heart className="w-3.5 h-3.5 text-brand-500 fill-brand-500" /> for single mothers everywhere.
+          <p className="text-slate-400 font-medium tracking-wide">
+            Made by women, for women — Dedicated to economic independence and self-reliance.
           </p>
         </div>
       </div>

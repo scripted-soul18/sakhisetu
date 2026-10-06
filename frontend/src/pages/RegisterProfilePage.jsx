@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, MapPin, GraduationCap, Briefcase, Clock, Baby, IndianRupee, Plus, X, ArrowRight, AlertCircle, ShieldCheck, LogIn, Check } from 'lucide-react';
+import { User, MapPin, GraduationCap, Briefcase, Clock, Baby, IndianRupee, Plus, X, ArrowRight, AlertCircle, ShieldCheck, LogIn, Check, Sparkles } from 'lucide-react';
 import { profileService, recommendationService, authService } from '../services/api';
+import { DEMO_PROFILES } from '../data/mockData';
 import LoadingScreen from '../components/LoadingScreen';
 import AuthModal from '../components/AuthModal';
 
@@ -76,6 +77,26 @@ export default function RegisterProfilePage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleQuickFill = (demoData) => {
+    setFormData({
+      full_name: demoData.full_name || '',
+      age: String(demoData.age || 28),
+      city: demoData.city || '',
+      state: demoData.state || 'Maharashtra',
+      education_level: demoData.education_level || "Bachelor's Degree",
+      qualification: demoData.qualification || '',
+      skills: demoData.skills || [],
+      years_of_experience: String(demoData.years_of_experience || 0),
+      preferred_job_type: demoData.preferred_job_type || 'Remote',
+      available_hours: String(demoData.available_hours || 4),
+      career_preference: demoData.career_preference || 'Data Entry',
+      number_of_children: String(demoData.number_of_children || 1),
+      child_age: String(demoData.child_age || 4),
+      monthly_income: demoData.monthly_income || 'Below ₹15,000',
+      preferred_salary: demoData.preferred_salary || '₹15,000 - ₹20,000'
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -174,6 +195,33 @@ export default function RegisterProfilePage() {
           <span>{errorMsg}</span>
         </div>
       )}
+
+      {/* Quick Fill Demo Persona Bar */}
+      <div className="bg-white p-4 sm:p-5 rounded-2xl border border-rose-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-brand-600 shrink-0" />
+          <div>
+            <p className="text-xs font-bold text-slate-800">
+              Quick Test: Fill Form with Demo Mother Persona
+            </p>
+            <p className="text-[11px] text-slate-500">
+              Select any profile to auto-populate the form and test match results:
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {DEMO_PROFILES.map((dp) => (
+            <button
+              key={dp.id}
+              type="button"
+              onClick={() => handleQuickFill(dp.data)}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-50 hover:bg-rose-50 text-slate-700 hover:text-brand-700 border border-slate-200 transition-all active:scale-95"
+            >
+              Fill: {dp.name}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Profile Form */}
       <form onSubmit={handleSubmit} className="space-y-8 bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm">
